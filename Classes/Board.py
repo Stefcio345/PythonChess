@@ -18,7 +18,11 @@ Colors = {
     "Bright_Magenta": '\033[95m',
     "Bright_Cyan": '\033[96m',
     "White": '\033[97m',
-    "Reset": '\033[0m'}
+    "Reset": '\033[0m',
+    "Whitebg": '\033[1m\033[47m',
+    "Greenbg": '\033[1m\033[42m',
+    "": ""}
+
 
 class GraphicsNotSameSizeException(Exception):
     def __init__(self):
@@ -105,6 +109,7 @@ class Square:
     def __init__(self, graphicsHandler, background="None"):
         self.state = "Empty"
         self.color = "Reset"
+        self.highlight = ""
         self.background = background
         self.graphicHandler = graphicsHandler
 
@@ -114,9 +119,9 @@ class Square:
 
         for pixelForeground, pixelBackground in zip(foreground[self.currentRow], bakcground[self.currentRow]):
             if pixelForeground == " ":
-                print(Colors["Reset"] + pixelBackground, end="")
+                print(Colors["Reset"] + Colors[self.highlight] + pixelBackground, end="")
             else:
-                print(Colors[self.color] + pixelForeground, end="")
+                print(Colors[self.color] + Colors[self.highlight] + pixelForeground, end="")
         if self.currentRow < len(foreground) - 1:
             self.currentRow += 1
         else:
@@ -129,11 +134,21 @@ class Square:
     @state.setter
     def state(self, value):
         value = value.split(" ")
+        #Normal square
         if len(value) == 1:
             self._state = value[0].title()
-        else:
+            self.color = "Reset"
+            self.highlight = ""
+        #Colored Square
+        elif len(value) == 2:
             self.color = value[0].title()
             self._state = value[1].title()
+            self.highlight = ""
+        else:
+        #Highlighted square
+            self.color = value[0].title()
+            self._state = value[1].title()
+            self.highlight = value[2].title()
 
 
 class Row:
@@ -160,7 +175,7 @@ class Row:
         for i in range(self.squareVerticalSize):
             for square in self.row:
                 square.printRow()
-                print(" "" " * self.verticalSpace, end="")
+                print(Colors["Reset"] + " " * self.verticalSpace, end="")
             print("")
 
     def getPos(self, index):
@@ -176,6 +191,7 @@ class Board:
         self.boardState = [
             Row(size, self.graphicsHandler.squareSizeVertical, self.graphicsHandler, verticalSpaces) for x in
             range(size)]
+
         # Set Top of board
         number = 64
         for square in self.boardState[0]:
@@ -207,6 +223,15 @@ class ChessBoard(Board):
     def __init__(self, verticalSpaces=0, horizontalSpaces=0):
         super().__init__(9, verticalSpaces, horizontalSpaces)
 
+        # Set Top of board
+        number = 72
+        for index, square in enumerate(self.boardState[0]):
+            if index == 0:
+                square.state = "None"
+            else:
+                square.state = chr(number)
+                number -= 1
+
         # Set Black pieces
         self.setPawn("Black", 2)
         self.setFigures("Black", 1)
@@ -229,13 +254,10 @@ class ChessBoard(Board):
 
         return state
 
-
     def setBoardState(self, state):
         for selfRow, row in zip(self.boardState[1:], state):
             for index, square in enumerate(row):
-                selfRow.getPos(index + 1).color = square[0]
-                selfRow.getPos(index+1).state = square[1]
-
+                selfRow.getPos(index + 1).state = " ".join(square)
 
     def printBoardState(self):
         for indexY, row in enumerate(self.boardState):
