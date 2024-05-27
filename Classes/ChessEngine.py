@@ -1,6 +1,4 @@
 class ChessEngine:
-    def checkMove(self, move):
-        ...
 
     def move(self, move):
         ...
@@ -23,10 +21,6 @@ class ChessEngine:
             case _:
                 return []
 
-    def highlightPossibleMoves(self, possibleMoves, boardState):
-        for move in possibleMoves:
-            boardState[move[0]][move[1]] = boardState[move[0]][move[1]] + ("greenbg", )
-
     def getPawnMoves(self, row, col, boardState):
 
         possibleMoves = []
@@ -37,7 +31,7 @@ class ChessEngine:
             endRow = row - 1
             if boardState[endRow][col][1] == "Empty" and 0 <= endRow <= 7:
                 possibleMoves.append((endRow, col))
-                endRow = row - 1
+                endRow = endRow - 1
                 if boardState[endRow][col][1] == "Empty" and row == 6:
                     possibleMoves.append((endRow, col))
         if allyColor == "Black":
@@ -56,15 +50,17 @@ class ChessEngine:
             for move in possibleWhiteAttacks:
                 endRow = row + move[0]
                 endCol = col + move[1]
-                if boardState[endRow][endCol][0] == "Black":
-                    possibleMoves.append((endRow, endCol))
+                if 0 <= endRow <= 7 and 0 <= endCol <= 7:
+                    if boardState[endRow][endCol][0] == "Black":
+                        possibleMoves.append((endRow, endCol))
 
         if allyColor == "Black":
             for move in possibleBlackAttacks:
                 endRow = row + move[0]
                 endCol = col + move[1]
-                if boardState[endRow][endCol][0] == "White":
-                    possibleMoves.append((endRow, endCol))
+                if 0 <= endRow <= 7 and 0 <= endCol <= 7:
+                    if boardState[endRow][endCol][0] == "White":
+                        possibleMoves.append((endRow, endCol))
 
         return possibleMoves
 

@@ -212,6 +212,7 @@ class Board:
 
     def printBoard(self):
         os.system('cls' if os.name == 'nt' else 'clear')
+        print("\n")
         for row in self.boardState:
             row.printRow()
 
@@ -249,7 +250,7 @@ class ChessBoard(Board):
                 temp = []
                 for indexX, square in enumerate(row):
                     if indexX != 0:
-                        temp.append((square.color, square.state))
+                        temp.append([square.color, square.state, square.highlight])
                 state.append(temp)
 
         return state
