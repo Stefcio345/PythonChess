@@ -225,13 +225,13 @@ class ChessBoard(Board):
         super().__init__(9, verticalSpaces, horizontalSpaces)
 
         # Set Top of board
-        number = 72
+        number = 65
         for index, square in enumerate(self.boardState[0]):
             if index == 0:
                 square.state = "None"
             else:
                 square.state = chr(number)
-                number -= 1
+                number += 1
 
         # Set Black pieces
         self.setPawn("Black", 2)

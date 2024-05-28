@@ -1,5 +1,3 @@
-import time
-
 from Classes.Board import ChessBoard
 from Classes.ChessEngine import ChessEngine
 from Classes.Cursor import Cursor
@@ -12,53 +10,62 @@ def clearBoardState(boardState):
         for cell in row:
             cell[2] = ""
 
+def getOppositeColor(color):
+    if color == "White":
+        return "Black"
+    else:
+        return "White"
 
-testState = [[["Reset","Empty",""],["Reset","Empty",""],["Black","Bishop",""],["Black","Queen",""],["Reset","Empty",""],["Black","Bishop",""],["Black","Knight",""],["Black","Rook",""]],
-[["Black","Pawn",""],["Black","Pawn",""],["Black","Pawn",""],["Black","Pawn",""],["Reset","Empty",""],["Black","Pawn",""],["Black","Pawn",""],["Black","Pawn",""]],
+testState = [[["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""]],
+[["Reset","Empty",""],["Reset","Empty",""],["Black","Pawn",""],["Reset","Empty",""],["Reset","Empty",""],["Black","Pawn",""],["Reset","Empty",""],["Black","Pawn",""]],
 [["White","Pawn",""],["Reset","Empty",""],["Black","Knight",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""]],
 [["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Black","Pawn",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""]],
 [["Reset","Empty",""],["Reset","Empty",""],["White","Queen",""],["White","Pawn",""],["Black","King",""],["White","Bishop",""],["Reset","Empty",""],["Reset","Empty",""]],
-[["Reset","Empty",""],["Black","Rook",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""]],
-[["White","Pawn",""],["White","Pawn",""],["White","Pawn",""],["Reset","Empty",""],["White","Pawn",""],["White","Pawn",""],["White","Pawn",""],["Reset","Empty",""]],
-[["White","Rook",""],["White","Knight",""],["Reset","Empty",""],["Reset","Empty",""],["White","King",""],["White","Bishop",""],["White","Knight",""],["White","Rook",""]]]
+[["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""]],
+[["White","Pawn",""],["Reset","Empty",""],["White","Pawn",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""]],
+[["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["White","King",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""]]]
 
 board = ChessBoard()
 board.setBoardState(testState)
 chessEngine = ChessEngine()
 possibleMoves = []
 boardCursor = Cursor(7, 7)
+board.printBoard()
+currentColor = "White"
 
-#GameLoopssssssds
+# GameLoop
 while True:
-    #board.printBoard()
-
-    #Move cursor
     prevCursorPos = boardCursor.getPos()
     prevSelectedPos = boardCursor.selectedPos
-    boardCursor.move()
-    cursorPos = boardCursor.getPos()
-    testState[prevCursorPos[1]][prevCursorPos[0]][2] = ""
-    clearBoardState(testState)
+    if boardCursor.move():
+        cursorPos = boardCursor.getPos()
+        testState[prevCursorPos[1]][prevCursorPos[0]][2] = ""
+        clearBoardState(testState)
 
-    selectedPos = boardCursor.selectedPos
-    possibleMoves = chessEngine.getMoves(selectedPos[1], selectedPos[0], testState)
+        selectedPos = boardCursor.selectedPos
 
-    #If piece was selected
-    if len(possibleMoves) > 0:
+        if testState[selectedPos[1]][selectedPos[0]][0] == currentColor:
+            possibleMoves = chessEngine.getMoves(selectedPos[1], selectedPos[0], testState)
+
+        # If piece was selected
+        if len(possibleMoves) > 0:
+            if (selectedPos[1], selectedPos[0]) in possibleMoves:
+                # Make move
+                testState[selectedPos[1]][selectedPos[0]] = testState[prevSelectedPos[1]][prevSelectedPos[0]]
+                testState[prevSelectedPos[1]][prevSelectedPos[0]] = ["Reset","Empty",""]
+                currentColor = getOppositeColor(currentColor)
+                possibleMoves = []
+            else:
+                if testState[selectedPos[1]][selectedPos[0]][0] == currentColor:
+                    possibleMoves = chessEngine.getMoves(selectedPos[1], selectedPos[0], testState)
+                else:
+                    possibleMoves = []
+
+        # Color board
         highlightPossibleMoves(possibleMoves, testState)
-        if (selectedPos[1], selectedPos[0]) in possibleMoves:
-            print("TREUEIEVNWEIUNEWOINFRUIEHJOPWBYUFIVJFEJKBHFIWEKJVUIWERHFPOEWFHUI")
+        testState[cursorPos[1]][cursorPos[0]][2] = "whiteBG"
 
-    # Color board
-    testState[cursorPos[1]][cursorPos[0]][2] = "whiteBG"
-
-    board.setBoardState(testState)
-
-
-
-
-
-
-
+        board.setBoardState(testState)
+        board.printBoard()
 
 

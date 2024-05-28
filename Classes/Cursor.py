@@ -39,19 +39,25 @@ class Cursor:
         with keyboard.Events() as events:
             event = events.get(1e6)
             if type(event) is keyboard.Events.Press:
-                print("Something")
                 try:
                     match event.key.char:
                         case 'w':
                             self.moveUp()
+                            return True
                         case 's':
                             self.moveDown()
+                            return True
                         case 'a':
                             self.moveLeft()
+                            return True
                         case 'd':
                             self.moveRight()
+                            return True
+                        case _ :
+                            return False
 
                 except AttributeError:
                     match event.key:
                         case keyboard.Key.space:
                             self.select()
+                            return True
