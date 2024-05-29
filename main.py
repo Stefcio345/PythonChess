@@ -16,18 +16,20 @@ def getOppositeColor(color):
     else:
         return "White"
 
-testState = [[["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""]],
-[["Reset","Empty",""],["Reset","Empty",""],["Black","Pawn",""],["Reset","Empty",""],["Reset","Empty",""],["Black","Pawn",""],["Reset","Empty",""],["Black","Pawn",""]],
-[["White","Pawn",""],["Reset","Empty",""],["Black","Knight",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""]],
-[["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Black","Pawn",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""]],
-[["Reset","Empty",""],["Reset","Empty",""],["White","Queen",""],["White","Pawn",""],["Black","King",""],["White","Bishop",""],["Reset","Empty",""],["Reset","Empty",""]],
-[["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""]],
-[["White","Pawn",""],["Reset","Empty",""],["White","Pawn",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""]],
-[["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["White","King",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""]]]
+state = [[["Reset", "Empty", ""], ["Reset", "Empty", ""], ["Reset", "Empty", ""], ["Reset", "Empty", ""], ["Reset", "Empty", ""], ["Reset", "Empty", ""], ["Reset", "Empty", ""], ["Reset", "Empty", ""]],
+         [["Reset","Empty",""],["Reset","Empty",""],["Black","Pawn",""],["Reset","Empty",""],["Reset","Empty",""],["Black","Pawn",""],["Reset","Empty",""],["Black","Pawn",""]],
+         [["White","Pawn",""],["Reset","Empty",""],["Black","Knight",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""]],
+         [["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Black","Pawn",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""]],
+         [["Reset","Empty",""],["Reset","Empty",""],["White","Queen",""],["White","Pawn",""],["Black","King",""],["White","Bishop",""],["Reset","Empty",""],["Reset","Empty",""]],
+         [["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""]],
+         [["White","Pawn",""],["Reset","Empty",""],["White","Pawn",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""]],
+         [["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["White","King",""],["White","Bishop",""],["Reset","Empty",""],["Black","Rook",""]]]
 
 board = ChessBoard()
-board.setBoardState(testState)
+state = board.getBoardState()
+board.setBoardState(state)
 chessEngine = ChessEngine()
+chessEngine.updateBoard(state)
 possibleMoves = []
 boardCursor = Cursor(7, 7)
 board.printBoard()
@@ -39,33 +41,34 @@ while True:
     prevSelectedPos = boardCursor.selectedPos
     if boardCursor.move():
         cursorPos = boardCursor.getPos()
-        testState[prevCursorPos[1]][prevCursorPos[0]][2] = ""
-        clearBoardState(testState)
+        state[prevCursorPos[1]][prevCursorPos[0]][2] = ""
+        clearBoardState(state)
 
         selectedPos = boardCursor.selectedPos
 
-        if testState[selectedPos[1]][selectedPos[0]][0] == currentColor:
-            possibleMoves = chessEngine.getMoves(selectedPos[1], selectedPos[0], testState)
+        if state[selectedPos[1]][selectedPos[0]][0] == currentColor:
+            possibleMoves = chessEngine.getMoves(selectedPos[1], selectedPos[0], state)
 
         # If piece was selected
         if len(possibleMoves) > 0:
             if (selectedPos[1], selectedPos[0]) in possibleMoves:
                 # Make move
-                testState[selectedPos[1]][selectedPos[0]] = testState[prevSelectedPos[1]][prevSelectedPos[0]]
-                testState[prevSelectedPos[1]][prevSelectedPos[0]] = ["Reset","Empty",""]
+                state[selectedPos[1]][selectedPos[0]] = state[prevSelectedPos[1]][prevSelectedPos[0]]
+                state[prevSelectedPos[1]][prevSelectedPos[0]] = ["Reset", "Empty", ""]
                 currentColor = getOppositeColor(currentColor)
                 possibleMoves = []
+                chessEngine.updateBoard(state)
             else:
-                if testState[selectedPos[1]][selectedPos[0]][0] == currentColor:
-                    possibleMoves = chessEngine.getMoves(selectedPos[1], selectedPos[0], testState)
+                if state[selectedPos[1]][selectedPos[0]][0] == currentColor:
+                    possibleMoves = chessEngine.getMoves(selectedPos[1], selectedPos[0], state)
                 else:
                     possibleMoves = []
 
         # Color board
-        highlightPossibleMoves(possibleMoves, testState)
-        testState[cursorPos[1]][cursorPos[0]][2] = "whiteBG"
+        highlightPossibleMoves(possibleMoves, state)
+        state[cursorPos[1]][cursorPos[0]][2] = "whiteBG"
 
-        board.setBoardState(testState)
+        board.setBoardState(state)
         board.printBoard()
 
 
