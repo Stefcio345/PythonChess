@@ -2,13 +2,17 @@ from Classes.Board import ChessBoard
 from Classes.ChessEngine import ChessEngine
 from Classes.Cursor import Cursor
 
+
 def highlightPossibleMoves(possibleMoves, boardState):
     for move in possibleMoves:
         boardState[move[0]][move[1]][2] = "greenbg"
+
+
 def clearBoardState(boardState):
     for row in boardState:
         for cell in row:
             cell[2] = ""
+
 
 def getOppositeColor(color):
     if color == "White":
@@ -16,14 +20,6 @@ def getOppositeColor(color):
     else:
         return "White"
 
-state = [[["Reset", "Empty", ""], ["Reset", "Empty", ""], ["Reset", "Empty", ""], ["Reset", "Empty", ""], ["Reset", "Empty", ""], ["Reset", "Empty", ""], ["Reset", "Empty", ""], ["Reset", "Empty", ""]],
-         [["Reset","Empty",""],["Reset","Empty",""],["Black","Pawn",""],["Reset","Empty",""],["Reset","Empty",""],["Black","Pawn",""],["Reset","Empty",""],["Black","Pawn",""]],
-         [["White","Pawn",""],["Reset","Empty",""],["Black","Knight",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""]],
-         [["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Black","Pawn",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""]],
-         [["Reset","Empty",""],["Reset","Empty",""],["White","Queen",""],["White","Pawn",""],["Black","King",""],["White","Bishop",""],["Reset","Empty",""],["Reset","Empty",""]],
-         [["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""]],
-         [["White","Pawn",""],["Reset","Empty",""],["White","Pawn",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""]],
-         [["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["Reset","Empty",""],["White","King",""],["White","Bishop",""],["Reset","Empty",""],["Black","Rook",""]]]
 
 board = ChessBoard()
 state = board.getBoardState()
@@ -34,6 +30,11 @@ possibleMoves = []
 boardCursor = Cursor(7, 7)
 board.printBoard()
 currentColor = "White"
+
+#TODO Menu
+#TODO Win condition
+#TODO save/load
+#TODO Mark check in red
 
 # GameLoop
 while True:
@@ -70,5 +71,3 @@ while True:
 
         board.setBoardState(state)
         board.printBoard()
-
-

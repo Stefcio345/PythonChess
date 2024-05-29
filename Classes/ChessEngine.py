@@ -46,6 +46,7 @@ class ChessEngine:
                 currPos = kingPos
                 while currPos != source:
                     currPos = (currPos[0] + direction[0], currPos[1] + direction[1])
+                    #TODO INT object is not subscritable
                     checkSources.append(currPos)
                 checkSources.append(source)
 
