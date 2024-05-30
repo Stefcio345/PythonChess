@@ -1,5 +1,6 @@
 from pynput import keyboard
 
+
 class Cursor:
 
     def __init__(self, maxX, maxY):
@@ -9,12 +10,17 @@ class Cursor:
         self.maxY = maxY
         self.selected = False
         self.selectedPos = None
+        self.prevSelectedPos = None
 
     def select(self):
+        self.prevSelectedPos = self.selectedPos
         self.selectedPos = self.getPos()
+        if self.prevSelectedPos == self.selectedPos:
+            self.unSelect()
 
-    def isSelected(self):
-        return self.selected
+    def unSelect(self):
+        self.selectedPos = None
+        self.prevSelectedPos = None
 
     def getPos(self):
         return self.y, self.x

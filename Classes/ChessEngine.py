@@ -1,9 +1,13 @@
 class ChessEngine:
 
-    currentColor = "Black"
+    currentColor = None
+
+    def __init__(self, state, colorToMove):
+        self.updateStates(state)
+        self.currentColor = colorToMove
 
     def makeMove(self, startingPos, endPos, boardState):
-        if startingPos in self.getMoves(endPos[0], endPos[1], boardState):
+        if endPos in self.getMoves(startingPos[0], startingPos[1], boardState):
             boardState.set(endPos, boardState.get(startingPos))
             boardState.set(startingPos, ["Reset", "Empty", ""])
             self.updateStates(boardState)
@@ -19,12 +23,8 @@ class ChessEngine:
                 moves = self.getMoves(selectedPos[0], selectedPos[1], boardState)
                 if len(moves) > 0:
                     self.highlightPossibleMoves(moves, boardState)
-                    boardState.get(cursorPos)[2] = "whiteBG"
-                    # If selected a Piece
-                    return True
 
         boardState.get(cursorPos)[2] = "whiteBG"
-        return False
 
     def updateStates(self, boardState):
         self.whiteKingPos = self.getKingPos(boardState, "White")
