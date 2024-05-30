@@ -1,10 +1,37 @@
 class ChessEngine:
 
-    def updateBoard(self, boardState):
-        whiteKingPos = self.getKingPos(boardState, "White")
-        blackKingPos = self.getKingPos(boardState, "Black")
-        self.whitePins, self.whiteChecks = self.checkForPins(whiteKingPos[0], whiteKingPos[1], boardState)
-        self.blackPins, self.blackChecks = self.checkForPins(blackKingPos[0], blackKingPos[1], boardState)
+    currentColor = "Black"
+
+    def makeMove(self, startingPos, endPos, boardState):
+        if startingPos in self.getMoves(endPos[0], endPos[1], boardState):
+            boardState.set(endPos, boardState.get(startingPos))
+            boardState.set(startingPos, ["Reset", "Empty", ""])
+            self.updateStates(boardState)
+            return True
+        return False
+
+    def updateBoard(self, cursorPos, selectedPos, boardState):
+        self.clearHighlights(boardState)
+        self.highlightChecks(boardState)
+
+        if selectedPos is not None:
+            if boardState.get(selectedPos)[0] == self.currentColor:
+                moves = self.getMoves(selectedPos[0], selectedPos[1], boardState)
+                if len(moves) > 0:
+                    self.highlightPossibleMoves(moves, boardState)
+                    boardState.get(cursorPos)[2] = "whiteBG"
+                    # If selected a Piece
+                    return True
+
+        boardState.get(cursorPos)[2] = "whiteBG"
+        return False
+
+    def updateStates(self, boardState):
+        self.whiteKingPos = self.getKingPos(boardState, "White")
+        self.blackKingPos = self.getKingPos(boardState, "Black")
+        self.whitePins, self.whiteChecks = self.checkForPins(self.whiteKingPos[0], self.whiteKingPos[1], boardState)
+        self.blackPins, self.blackChecks = self.checkForPins(self.blackKingPos[0], self.blackKingPos[1], boardState)
+        self.currentColor = self.getOppositeColor(self.currentColor)
 
     def getMoves(self, row, col, boardState):
         piece = boardState[row][col][1]
@@ -46,7 +73,6 @@ class ChessEngine:
                 currPos = kingPos
                 while currPos != source:
                     currPos = (currPos[0] + direction[0], currPos[1] + direction[1])
-                    #TODO INT object is not subscritable
                     checkSources.append(currPos)
                 checkSources.append(source)
 
@@ -74,18 +100,22 @@ class ChessEngine:
         #Check movement
         if allyColor == "White":
             endRow = row - 1
-            if boardState[endRow][col][1] == "Empty" and 0 <= endRow <= 7:
-                possibleMoves.append((endRow, col))
-                endRow = endRow - 1
-                if boardState[endRow][col][1] == "Empty" and row == 6:
+            if 0 <= endRow <= 7:
+                if boardState[endRow][col][1] == "Empty":
                     possibleMoves.append((endRow, col))
+                    endRow = endRow - 1
+                    if row == 6:
+                        if boardState[endRow][col][1] == "Empty":
+                            possibleMoves.append((endRow, col))
         if allyColor == "Black":
             endRow = row + 1
-            if boardState[endRow][col][1] == "Empty" and 0 <= endRow <= 7:
-                possibleMoves.append((endRow, col))
-                endRow = endRow + 1
-                if boardState[endRow][col][1] == "Empty" and row == 1:
+            if 0 <= endRow <= 7:
+                if boardState[endRow][col][1] == "Empty":
                     possibleMoves.append((endRow, col))
+                    endRow = endRow + 1
+                    if row == 1:
+                        if boardState[endRow][col][1] == "Empty":
+                            possibleMoves.append((endRow, col))
 
         #Check Attacks
         possibleBlackAttacks = ((1, -1), (1, 1))
@@ -221,7 +251,7 @@ class ChessEngine:
                                     (distance == 1 and enemy == "King") or
                                     (distance == 1 and enemy == "Pawn" and (
                                             (enemyColor == "Black" and 4 <= index <= 5) or (
-                                             enemyColor == "White" and 6 <= index <= 7)))):
+                                            enemyColor == "White" and 6 <= index <= 7)))):
                                 if possiblePin == ():
                                     # Found check append, check source + direction
                                     checks.append(((nextRow, nextCol), move))
@@ -245,7 +275,7 @@ class ChessEngine:
             if 0 <= endRow <= 7 and 0 <= endCol <= 7:
                 endPiece = boardState[endRow][endCol]
                 if endPiece[0] == enemyColor and endPiece[1] == "Knight":  # so its either enemy piece or empty square
-                    checks.append((endRow, endCol))
+                    checks.append(((endRow, endCol), move))
 
         return pins, checks
 
@@ -279,3 +309,34 @@ class ChessEngine:
             for indexX, tile in enumerate(row):
                 if tile[0] == color and tile[1] == "King":
                     return indexY, indexX
+
+    def checkIfMate(self, boardState):
+        if len(self.whiteChecks) > 0:
+            if len(self.getAllMoves(boardState, "White")) == 0:
+                return True
+        elif len(self.blackChecks) > 0:
+            if len(self.getAllMoves(boardState, "Black")) == 0:
+                return True
+        else:
+            return False
+
+    def highlightChecks(self, boardState):
+        if len(self.whiteChecks) > 0:
+            boardState.get(self.whiteKingPos)[2] = "Redbg"
+        if len(self.blackChecks) > 0:
+            boardState.get(self.blackKingPos)[2] = "Redbg"
+
+    def clearHighlights(self, boardState):
+        for row in boardState:
+            for cell in row:
+                cell[2] = ""
+
+    def highlightPossibleMoves(self, possibleMoves, boardState):
+        for move in possibleMoves:
+            boardState.get(move)[2] = "greenbg"
+
+    def getOppositeColor(self, color):
+        if color == "White":
+            return "Black"
+        else:
+            return "White"

@@ -8,13 +8,16 @@ class Cursor:
         self.maxX = maxX
         self.maxY = maxY
         self.selected = False
-        self.selectedPos = (0, 0)
+        self.selectedPos = None
 
     def select(self):
         self.selectedPos = self.getPos()
 
     def isSelected(self):
         return self.selected
+
+    def getPos(self):
+        return self.y, self.x
 
     def moveUp(self):
         if self.y > 0:
@@ -32,15 +35,13 @@ class Cursor:
         if self.x < self.maxX:
             self.x += 1
 
-    def getPos(self):
-        return self.x, self.y
-
     def move(self):
         with keyboard.Events() as events:
             event = events.get(1e6)
             if type(event) is keyboard.Events.Press:
                 try:
-                    match event.key.char:
+                    key = event.key.char
+                    match key:
                         case 'w':
                             self.moveUp()
                             return True
@@ -53,7 +54,7 @@ class Cursor:
                         case 'd':
                             self.moveRight()
                             return True
-                        case _ :
+                        case _:
                             return False
 
                 except AttributeError:
@@ -61,3 +62,17 @@ class Cursor:
                         case keyboard.Key.space:
                             self.select()
                             return True
+                        case keyboard.Key.up:
+                            self.moveUp()
+                            return True
+                        case keyboard.Key.space.down:
+                            self.moveDown()
+                            return True
+                        case keyboard.Key.left:
+                            self.moveLeft()
+                            return True
+                        case keyboard.Key.right:
+                            self.moveRight()
+                            return True
+                        case _:
+                            return False
