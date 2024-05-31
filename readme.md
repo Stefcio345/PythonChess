@@ -57,6 +57,6 @@ Projekt Szachów w Pythonie to gra szachowa zaimplementowana w języku Python, u
    ```
 
 ## Użycie
-Starowania - wsad, strzałki, enter, spacja
+Sterowanie - wsad, strzałki, enter, spacja
 
 Po uruchomieniu gry pojawi się okno z planszą szachową. Gracze mogą na przemian wykonywać ruchy, zaznaczając figury i przestawiając je na wybrane pola. Gra automatycznie wykrywa nielegalne ruchy oraz informuje o zakończeniu gry w przypadku szach-mata lub pata.
