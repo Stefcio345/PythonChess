@@ -21,7 +21,12 @@ Projekt Szachów w Pythonie to gra szachowa zaimplementowana w języku Python, u
    - Wykrywanie szacha, szach-mata oraz pata.
    - Zapisywanie stanu gry do pliku
    - Implementacja pinowania figur
-   - [TODO] Obsługa promocji piona, roszady oraz bicia w przelocie.
+
+3. TODO
+- [ ] Obsługa promocji piona, roszady oraz bicia w przelocie.
+- [ ] Szachowe AI
+- [ ] Refaktor kodu klasy board.py
+- [ ] współdzielonych zasobów do osobnego pliku
 
 ## Struktura Kodu
 
