@@ -19,7 +19,7 @@ Projekt Szachów w Pythonie to gra szachowa zaimplementowana w języku Python, u
 2. **Logika gry**:
    - Implementacja zasad gry w szachy, w tym ruchów wszystkich figur (król, hetman, wieża, goniec, skoczek, pion).
    - Wykrywanie szacha, szach-mata oraz pata.
-   - Zapisywanie stanu gry do pliku
+   - Zapisywanie stanu gry oraz wczytywanie z i do pliku
    - Implementacja pinowania figur
 
 3. TODO
