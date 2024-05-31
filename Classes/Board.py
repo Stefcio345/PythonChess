@@ -1,6 +1,15 @@
 import os
 
 Colors = {
+    "Black": '\033[90m',
+    "White": '\033[97m',
+    "Reset": '\033[0m',
+    "Whitebg": '\033[1m\033[47m',
+    "Greenbg": '\033[1m\033[42m',
+    "Redbg": '\033[1m\033[41m',
+    "": ""}
+
+ColorsReference = {
     #"BLACK": '\033[30m',
     "Black": '\033[90m',
     "Red": '\033[31m',
@@ -24,6 +33,12 @@ Colors = {
     "Redbg": '\033[1m\033[41m',
     "": ""}
 
+#TODO Fix this to make more sense
+def setColors(base, color):
+    Colors[base] = color
+def setGraphics(graphicsPath):
+    GraphicsHandler.graphicsPath = "./Graphics/" + graphicsPath
+
 
 class GraphicsNotSameSizeException(Exception):
     def __init__(self):
@@ -34,6 +49,7 @@ class GraphicsHandler:
     graphics = {}
     squareSizeVertical = 0
     squareSizeHorizontal = 0
+    graphicsPath = "./Graphics/defaultGraphics"
 
     def __init__(self):
         self.squareSizeVertical, self.squareSizeHorizontal = self.loadSquareSizeFromFiles()
@@ -50,7 +66,8 @@ class GraphicsHandler:
         else:
             return self.graphics["Missing"]
 
-    def loadGraphicsIntoMemory(self, path="./Graphics"):
+    def loadGraphicsIntoMemory(self):
+        path = self.graphicsPath
         for file in os.listdir(path):
             graphicsLoadedFromFile = []
             f = open(f"{path}/{file}", "r", encoding="utf-8", errors='ignore')
@@ -68,9 +85,9 @@ class GraphicsHandler:
         sizeHorizontal = 0
         sizeVertical = 0
 
-        for index, file in enumerate(os.listdir("./Graphics")):
+        for index, file in enumerate(os.listdir(self.graphicsPath)):
             sizeVertical = 0
-            f = open(f"./Graphics/{file}", "r", encoding="utf-8", errors='ignore')
+            f = open(f"{self.graphicsPath}/{file}", "r", encoding="utf-8", errors='ignore')
             for line in f:
                 sizeVertical += 1
                 # Check horizontal size
@@ -86,9 +103,9 @@ class GraphicsHandler:
         return sizeVertical, sizeHorizontal
 
     def normalizeGraphics(self, maxHorizontalSize):
-        for file in os.listdir("./Graphics"):
+        for file in os.listdir(self.graphicsPath):
             newLetter = ""
-            f = open(f"./Graphics/{file}", "r+", encoding="utf-8", errors='ignore')
+            f = open(f"{self.graphicsPath}/{file}", "r+", encoding="utf-8", errors='ignore')
             for line in f:
                 line = line.rstrip()
                 if len(line) < maxHorizontalSize:
@@ -146,7 +163,7 @@ class Square:
             self._state = value[1].title()
             self.highlight = ""
         else:
-        #Highlighted square
+            #Highlighted square
             self.color = value[0].title()
             self._state = value[1].title()
             self.highlight = value[2].title()

@@ -8,7 +8,6 @@ class Cursor:
         self.y = 0
         self.maxX = maxX
         self.maxY = maxY
-        self.selected = False
         self.selectedPos = None
         self.prevSelectedPos = None
 
@@ -21,6 +20,11 @@ class Cursor:
     def unSelect(self):
         self.selectedPos = None
         self.prevSelectedPos = None
+
+    def reset(self):
+        self.unSelect()
+        self.x = 0
+        self.y = 0
 
     def getPos(self):
         return self.y, self.x
@@ -50,35 +54,40 @@ class Cursor:
                     match key:
                         case 'w':
                             self.moveUp()
-                            return True
+                            return "Valid_key"
                         case 's':
                             self.moveDown()
-                            return True
+                            return "Valid_key"
                         case 'a':
                             self.moveLeft()
-                            return True
+                            return "Valid_key"
                         case 'd':
                             self.moveRight()
-                            return True
+                            return "Valid_key"
                         case _:
-                            return False
+                            return "Invalid_key"
 
                 except AttributeError:
                     match event.key:
+                        case keyboard.Key.esc:
+                            return "Pause"
                         case keyboard.Key.space:
                             self.select()
-                            return True
+                            return "Valid_key"
+                        case keyboard.Key.enter:
+                            self.select()
+                            return "Valid_key"
                         case keyboard.Key.up:
                             self.moveUp()
-                            return True
+                            return "Valid_key"
                         case keyboard.Key.space.down:
                             self.moveDown()
-                            return True
+                            return "Valid_key"
                         case keyboard.Key.left:
                             self.moveLeft()
-                            return True
+                            return "Valid_key"
                         case keyboard.Key.right:
                             self.moveRight()
-                            return True
+                            return "Valid_key"
                         case _:
-                            return False
+                            return "Invalid_key"
