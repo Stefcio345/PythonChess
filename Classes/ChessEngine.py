@@ -5,15 +5,15 @@ class ChessEngine:
         self.updateStates(state)
         self.currentColor = colorToMove
         self.mate = False
+        self.winner = None
 
     def makeMove(self, startingPos, endPos, boardState):
-        #TODO Bandaidfix check this later
+        #TODO Bandaid fix check this later
         if boardState.get(startingPos).color == self.currentColor:
             if endPos in self.getMoves(startingPos, boardState):
                 boardState.set(endPos, boardState.get(startingPos))
                 boardState.set(startingPos, ["Reset", "Empty", ""])
                 self.updateStates(boardState)
-                self.mate = self.checkIfMate(boardState)
                 return True
         return False
 
@@ -34,7 +34,26 @@ class ChessEngine:
         self.blackKingPos = self.getKingPos(boardState, "Black")
         self.whitePins, self.whiteChecks = self.checkForPins(self.whiteKingPos, boardState)
         self.blackPins, self.blackChecks = self.checkForPins(self.blackKingPos, boardState)
+
+        self.mate = self.checkIfMate(boardState)
         self.currentColor = self.getOppositeColor(self.currentColor)
+
+        print(self.blackChecks, self.whiteChecks)
+        if self.mate:
+            if self.currentColor == "Black":
+                if len(self.blackChecks) == 0:
+                    # StaleMate
+                    self.winner = "Stalemate"
+                else:
+                    # CheckMate, White Wins
+                    self.winner = "White"
+            else:
+                if len(self.whiteChecks) == 0:
+                    # StaleMate
+                    self.winner = "Stalemate"
+                else:
+                    # CheckMate, Black Wins
+                    self.winner = "Black"
 
     def getMoves(self, pos, boardState):
         piece = boardState.get(pos).content
@@ -299,7 +318,7 @@ class ChessEngine:
     def clearHighlights(self, boardState):
         for row in boardState:
             for cell in row:
-                cell[2] = ""
+                cell.background = ""
 
     def highlightPossibleMoves(self, possibleMoves, boardState):
         for move in possibleMoves:

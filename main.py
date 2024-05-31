@@ -1,4 +1,5 @@
 import os
+import time
 
 from Classes.Board import ChessBoard, setGraphics, setColors
 from Classes.ChessEngine import ChessEngine
@@ -49,6 +50,34 @@ noSaveMenu = Menu("""+=====================================================+
 ||_| \_|  \___/    |____/  /_/   \_\    \_/    |_____||
 +=====================================================+""")
 noSaveMenu.add_item(MenuItem("exit", "Exit"))
+
+blackWinMenu = Menu("""+===========================================================================================+
+| ____    _          _       ____   _  __   __        __  ___   _   _   ____      _   _   _ |
+|| __ )  | |        / \     / ___| | |/ /   \ \      / / |_ _| | \ | | / ___|    | | | | | ||
+||  _ \  | |       / _ \   | |     | ' /     \ \ /\ / /   | |  |  \| | \___ \    | | | | | ||
+|| |_) | | |___   / ___ \  | |___  | . \      \ V  V /    | |  | |\  |  ___) |   |_| |_| |_||
+||____/  |_____| /_/   \_\  \____| |_|\_\      \_/\_/    |___| |_| \_| |____/    (_) (_) (_)|
++===========================================================================================+""")
+blackWinMenu.add_item(MenuItem("exit", "Exit"))
+
+whiteWinMenu = Menu("""+=============================================================================================+
+|__        __  _   _   ___   _____   _____    __        __  ___   _   _   ____      _   _   _ |
+|\ \      / / | | | | |_ _| |_   _| | ____|   \ \      / / |_ _| | \ | | / ___|    | | | | | ||
+| \ \ /\ / /  | |_| |  | |    | |   |  _|      \ \ /\ / /   | |  |  \| | \___ \    | | | | | ||
+|  \ V  V /   |  _  |  | |    | |   | |___      \ V  V /    | |  | |\  |  ___) |   |_| |_| |_||
+|   \_/\_/    |_| |_| |___|   |_|   |_____|      \_/\_/    |___| |_| \_| |____/    (_) (_) (_)|
++=============================================================================================+""")
+whiteWinMenu.add_item(MenuItem("exit", "Exit"))
+
+staleMateMenu = Menu("""+=======================================================================================+
+| ____    _____      _      _       _____   __  __      _      _____   _____          __|
+|/ ___|  |_   _|    / \    | |     | ____| |  \/  |    / \    |_   _| | ____|    _   / /|
+|\___ \    | |     / _ \   | |     |  _|   | |\/| |   / _ \     | |   |  _|     (_) | | |
+| ___) |   | |    / ___ \  | |___  | |___  | |  | |  / ___ \    | |   | |___     _  | | |
+||____/    |_|   /_/   \_\ |_____| |_____| |_|  |_| /_/   \_\   |_|   |_____|   (_) | | |
+|                                                                                    \_\|
++=======================================================================================+""")
+staleMateMenu.add_item(MenuItem("exit", "Exit"))
 
 #TODO Read items from file
 #TODO Normalize graphics when changing
@@ -113,15 +142,22 @@ def startGame(customState=None):
                 board.printBoard()
 
                 if chessEngine.mate:
-                    print(f"{ChessEngine.currentColor} WINS!!!! \n Press enter to exit")
-                    boardCursor.move()
+                    print("Game has ended.")
+                    time.sleep(5)
+                    match chessEngine.winner:
+                        case "Black":
+                            blackWinMenu.select()
+                        case "White":
+                            whiteWinMenu.select()
+                        case "Stalemate":
+                            staleMateMenu.select()
                     break
             case "Pause":
                 match pauseMenu.select():
                     case "resume":
                         pass
                     case "save_and_exit":
-                        state.saveToFile("save")
+                        state.saveToFile("./saves/save")
                         break
                     case "exit":
                         break
@@ -135,8 +171,8 @@ if __name__ == "__main__":
             case "start_game":
                 startGame()
             case "resume_game":
-                if os.path.isfile("./save"):
-                    state = loadFromFile("save")
+                if os.path.isfile("saves/save"):
+                    state = loadFromFile("saves/save")
                     startGame(state)
                 else:
                     noSaveMenu.select()

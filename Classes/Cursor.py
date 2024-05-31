@@ -80,7 +80,7 @@ class Cursor:
                         case keyboard.Key.up:
                             self.moveUp()
                             return "Valid_key"
-                        case keyboard.Key.space.down:
+                        case keyboard.Key.down:
                             self.moveDown()
                             return "Valid_key"
                         case keyboard.Key.left:
